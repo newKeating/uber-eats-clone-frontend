@@ -1,6 +1,8 @@
 import { useMemo } from "react";
-import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache, makeVar } from "@apollo/client";
 import { isServer } from "../utils/isServer";
+
+export const isLoggedInVar = makeVar(false);
 
 let apolloClient: any;
 
@@ -10,7 +12,9 @@ function createApolloClient() {
     link: new HttpLink({
       uri: process.env.NEXT_PUBLIC_API_URL as string,
     }),
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {},
+    }),
   });
 }
 
