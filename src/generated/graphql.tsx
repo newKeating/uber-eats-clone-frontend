@@ -603,7 +603,24 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'email'>
+    & Pick<User, 'id' | 'email' | 'role' | 'verified'>
+  ) }
+);
+
+export type RestaurantsQueryVariables = Exact<{
+  input: RestaurantsInput;
+}>;
+
+
+export type RestaurantsQuery = (
+  { __typename?: 'Query' }
+  & { restaurants: (
+    { __typename?: 'RestaurantsOutput' }
+    & Pick<RestaurantsOutput, 'ok'>
+    & { results?: Maybe<Array<(
+      { __typename?: 'Restaurant' }
+      & Pick<Restaurant, 'id' | 'name'>
+    )>> }
   ) }
 );
 
@@ -680,6 +697,8 @@ export const MeDocument = gql`
   me {
     id
     email
+    role
+    verified
   }
 }
     `;
@@ -708,3 +727,40 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const RestaurantsDocument = gql`
+    query Restaurants($input: RestaurantsInput!) {
+  restaurants(input: $input) {
+    ok
+    results {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useRestaurantsQuery__
+ *
+ * To run a query within a React component, call `useRestaurantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRestaurantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRestaurantsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRestaurantsQuery(baseOptions: Apollo.QueryHookOptions<RestaurantsQuery, RestaurantsQueryVariables>) {
+        return Apollo.useQuery<RestaurantsQuery, RestaurantsQueryVariables>(RestaurantsDocument, baseOptions);
+      }
+export function useRestaurantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RestaurantsQuery, RestaurantsQueryVariables>) {
+          return Apollo.useLazyQuery<RestaurantsQuery, RestaurantsQueryVariables>(RestaurantsDocument, baseOptions);
+        }
+export type RestaurantsQueryHookResult = ReturnType<typeof useRestaurantsQuery>;
+export type RestaurantsLazyQueryHookResult = ReturnType<typeof useRestaurantsLazyQuery>;
+export type RestaurantsQueryResult = Apollo.QueryResult<RestaurantsQuery, RestaurantsQueryVariables>;

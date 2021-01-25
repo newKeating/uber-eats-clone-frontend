@@ -55,9 +55,6 @@ const SignUpForm: React.FC<IProps> = ({
       {errors.password?.message && (
         <ErrorMessage errorMessage={errors.password.message} />
       )}
-      {errors.password?.type === "minLength" && (
-        <ErrorMessage errorMessage="Password must be more than 10chars." />
-      )}
 
       <Select
         name="role"

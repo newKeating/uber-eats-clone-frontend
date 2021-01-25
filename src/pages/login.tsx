@@ -1,11 +1,14 @@
+import { Link } from "@chakra-ui/react";
+import Head from "next/head";
+import NextLink from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "@chakra-ui/react";
-import ErrorMessage from "../components/ErrorMessage";
-import { LoginMutation, useLoginMutation } from "../generated/graphql";
+import { authTokenVar, isLoggedInVar } from "../apollo/globalState";
+import withApollo from "../apollo/withApollo";
 import Button from "../components/Button";
-import NextLink from "next/link";
-import Head from "next/head";
+import ErrorMessage from "../components/ErrorMessage";
+import { LOCALSTORAGE_TOKEN } from "../constants";
+import { LoginMutation, useLoginMutation } from "../generated/graphql";
 
 interface IProps {}
 interface ILoginForm {
@@ -14,23 +17,25 @@ interface ILoginForm {
 }
 
 const Login: React.FC<IProps> = ({}) => {
-  const onCompleted = (data: LoginMutation) => {
-    console.log("onCompleted-data", data);
+  const onLoginCompleted = (data: LoginMutation) => {
     const {
       login: { ok, token },
     } = data;
-    if (ok) {
+    if (ok && token) {
       console.log("token", token);
+      localStorage.setItem(LOCALSTORAGE_TOKEN, token);
+      authTokenVar(token);
+      isLoggedInVar(true);
     }
   };
   // Make a modal to show every network error
-  const onError = () => {};
+  const onLoginError = () => {};
   const [
     loginMutation,
     { data: loginMutationResult, loading },
   ] = useLoginMutation({
-    onCompleted,
-    onError,
+    onCompleted: onLoginCompleted,
+    onError: onLoginError,
   });
   const {
     register,
@@ -41,7 +46,6 @@ const Login: React.FC<IProps> = ({}) => {
   } = useForm<ILoginForm>({
     mode: "onChange",
   });
-  console.log("errors", errors);
 
   const onSubmit = async () => {
     console.log("LoginForm", getValues());
@@ -129,4 +133,4 @@ const Login: React.FC<IProps> = ({}) => {
   );
 };
 
-export default Login;
+export default withApollo()(Login);

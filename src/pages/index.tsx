@@ -1,22 +1,49 @@
-import { useQuery, useReactiveVar } from "@apollo/client";
-import Link from "next/link";
+import { useReactiveVar } from "@apollo/client";
+import { isLoggedInVar } from "../apollo/globalState";
+import withApollo from "../apollo/withApollo";
 import Layout from "../components/Layout";
-import { isLoggedInVar } from "../apollo/apolloClient";
-import LoginForm from "../components/LoginForm";
+import { useMeQuery } from "../generated/graphql";
+import withAuth from "../hocs/withAuth";
+import compose from "../utils/compose";
 
-const IndexPage = () => {
+const Index = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const onClickLogin = () => {
     isLoggedInVar(true);
   };
+  const { data: meQueryData, loading } = useMeQuery();
+  console.log("Index loading", loading);
+  console.log("Index meQuery", meQueryData);
   return (
     <Layout title="Home | Next.js + TypeScript Example">
       <h1>Hello Next.js 👋</h1>
-      <button onClick={onClickLogin}>change loggedin value</button>
 
-      <LoginForm></LoginForm>
+      {loading ? <div>Loading...</div> : <div>{meQueryData?.me.email}</div>}
     </Layout>
   );
 };
 
-export default IndexPage;
+export default compose(withApollo(), withAuth({ role: "Client" }))(Index);
+// export default withApollo()(withAuth({ role: "Admin" })(Index));
+// export default Index;
+
+// export async function getStaticProps() {
+//   const apolloClient = initializeApollo();
+
+//   await apolloClient.query({
+//     query: gql`
+//       query me {
+//         me {
+//           id
+//           email
+//           role
+//           verified
+//         }
+//       }
+//     `,
+//   });
+
+//   return {
+//     props: apolloClient.cache.extract(),
+//   };
+// }

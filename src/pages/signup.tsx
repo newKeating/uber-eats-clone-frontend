@@ -1,5 +1,6 @@
 import Head from "next/head";
 import React from "react";
+import { useRouter } from "next/router";
 import { Resolver, useForm } from "react-hook-form";
 import ErrorMessage from "../components/ErrorMessage";
 import { CreateAccountInput } from "../generated/graphql";
@@ -11,12 +12,21 @@ import {
 } from "../generated/graphql";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signUpFormSchema } from "../components/forms/SignUpForm/SignUpForm";
+import withApollo from "../apollo/withApollo";
 
 interface IProps {}
 
 const SignUp: React.FC<IProps> = ({}) => {
+  const router = useRouter();
   const onCompleted = (data: CreateAccountMutation) => {
     console.log("onCompleted-data", data);
+    const {
+      createAccount: { ok, error },
+    } = data;
+    if (ok) {
+      // redirect to login page'
+      router.replace("/login");
+    }
   };
   // Make a modal to show every network error
   const onError = () => {};
@@ -81,4 +91,4 @@ const SignUp: React.FC<IProps> = ({}) => {
   );
 };
 
-export default SignUp;
+export default withApollo()(SignUp);

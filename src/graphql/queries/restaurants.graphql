@@ -1,0 +1,9 @@
+query Restaurants($input: RestaurantsInput!) {
+  restaurants(input: $input) {
+    ok
+    results {
+      id
+      name
+    }
+  }
+}

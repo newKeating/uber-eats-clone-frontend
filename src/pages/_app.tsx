@@ -1,17 +1,20 @@
+import { CSSReset, theme, ThemeProvider } from "@chakra-ui/react";
+import withApollo from "../apollo/withApollo";
+import { useMeQuery } from "../generated/graphql";
+import "../styles/globals.css";
 import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../apollo/apolloClient";
-import "../styles/globals.css";
-import { ThemeProvider, theme, CSSReset } from "@chakra-ui/react";
 
-function MyApp({ Component, pageProps }: any) {
-  const apolloClient = useApollo(pageProps.initialApolloState);
+function MyApp({ Component, pageProps, ctx }: any) {
+  // const { data: meQueryData, loading } = useMeQuery();
+  // console.log("-app loading", loading);
+  // console.log("-app meQuery", meQueryData);
+
   return (
-    <ApolloProvider client={apolloClient}>
-      <ThemeProvider theme={theme}>
-        <CSSReset />
-        <Component {...pageProps} />
-      </ThemeProvider>
-    </ApolloProvider>
+    <ThemeProvider theme={theme}>
+      <CSSReset />
+      <Component {...pageProps} />
+    </ThemeProvider>
   );
 }
 
