@@ -40,9 +40,12 @@ const withAuth: OuterFunction = (options) => (WrappedComponent) => {
       if (role !== options.role) {
         alert("You are not allowed!");
         router.replace("/");
+      } else {
+        return <WrappedComponent {...props} />;
       }
     }
-    return <WrappedComponent {...props} />;
+
+    return <div>loading</div>;
   };
 
   return WithAuth;

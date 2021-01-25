@@ -23,9 +23,9 @@ const Index = () => {
   );
 };
 
-export default compose(withApollo(), withAuth({ role: "Client" }))(Index);
+// export default compose(withApollo(), withAuth({ role: "Client" }))(Index);
 // export default withApollo()(withAuth({ role: "Admin" })(Index));
-// export default Index;
+export default withApollo()(Index);
 
 // export async function getStaticProps() {
 //   const apolloClient = initializeApollo();
