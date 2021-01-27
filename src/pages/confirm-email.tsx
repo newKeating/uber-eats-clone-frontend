@@ -22,8 +22,12 @@ const ConfirmEmail: React.FC<IProps> = ({ client }) => {
 
   const onCompleted = (data: VerifyEmailMutation) => {
     const {
-      verifyEmail: { ok },
+      verifyEmail: { ok, error },
     } = data;
+    if (!ok && error) {
+      alert(error);
+      router.push("/");
+    }
     if (ok && userData?.me) {
       client.writeFragment({
         id: `User:${userData?.me.id}`,
@@ -40,14 +44,15 @@ const ConfirmEmail: React.FC<IProps> = ({ client }) => {
     }
   };
 
-  const [verifyEmail, { loading, error, data }] = useVerifyEmailMutation({
+  const [verifyEmail] = useVerifyEmailMutation({
     onCompleted,
     // update:
   });
 
   useEffect(() => {
-    if (router.query.code) {
-      console.log("code", router.query.code);
+    if (!router.query.code) {
+      router.push("/");
+    } else {
       verifyEmail({
         variables: {
           input: {
