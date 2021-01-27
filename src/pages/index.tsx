@@ -7,6 +7,7 @@ import Layout from "../components/Layout";
 import Restaurant from "../components/Restaurant";
 import RestaurantCategory from "../components/RestaurantCategory";
 import { useRestaurantsPageQuery } from "../generated/graphql";
+import NextLink from "next/link";
 
 interface IProps {}
 
@@ -70,7 +71,11 @@ const Index: React.FC<IProps> = () => {
         <div className="flex justify-around max-w-sm mx-auto">
           {data?.allCategories.categories?.map((category) => {
             return (
-              <RestaurantCategory key={category.id} name={category.name} />
+              <NextLink key={category.id} href={`category/${category.slug}`}>
+                <div>
+                  <RestaurantCategory name={category.name} />
+                </div>
+              </NextLink>
             );
           })}
         </div>

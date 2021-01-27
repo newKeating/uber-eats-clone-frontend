@@ -1,9 +1,9 @@
 query Restaurants($input: RestaurantsInput!) {
   restaurants(input: $input) {
     ok
+    error
     results {
-      id
-      name
+      ...RestaurantParts
     }
   }
 }

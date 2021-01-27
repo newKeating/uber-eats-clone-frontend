@@ -3,11 +3,7 @@ query restaurantsPage($input: RestaurantsInput!) {
     ok
     error
     categories {
-      id
-      name
-      coverImg
-      slug
-      restaurantCount
+      ...CategoryParts
     }
   }
   restaurants(input: $input) {
@@ -16,14 +12,7 @@ query restaurantsPage($input: RestaurantsInput!) {
     totalPages
     totalResults
     results {
-      id
-      name
-      coverImg
-      category {
-        name
-      }
-      address
-      isPromoted
+      ...RestaurantParts
     }
   }
 }

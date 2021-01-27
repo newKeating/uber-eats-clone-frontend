@@ -1,0 +1,14 @@
+query Category($input: CategoryInput!) {
+  category(input: $input) {
+    ok
+    error
+    totalPages
+    totalResults
+    category {
+      ...CategoryParts
+    }
+    restaurants {
+      ...RestaurantParts
+    }
+  }
+}
