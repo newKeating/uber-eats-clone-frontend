@@ -1,48 +1,41 @@
 import { useRouter } from "next/router";
-import React, { Component } from "react";
+import React from "react";
 import { useMeQuery, UserRole } from "../generated/graphql";
 
 interface IProps {}
 
-interface IState {}
-
-// export interface InnerHOCFunction {
-//   (WrapperComponent: React.Component): React.Component<IProps, IState>;
-// }
+// interface IState {}
 
 export interface OuterFunctionOptions {
-  role: UserRole;
+  role?: UserRole;
 }
 
-// interface InnerFunction {
-//   (WrappedComponent:React.Component<IProps, IState>): React.Component<IProps, IState>
-// }
+interface InnerFunction {
+  (WrappedComponent: React.FC<IProps>): React.FC<IProps>;
+}
 
 export interface OuterFunction {
-  (options: OuterFunctionOptions): React.Component<IProps, IState>;
+  (options?: OuterFunctionOptions): InnerFunction;
 }
 
 const withAuth: OuterFunction = (options) => (WrappedComponent) => {
-  console.log("withAuth-options", options);
-
-  const WithAuth = (props) => {
+  const WithAuth: React.FC<IProps> = (props) => {
     const router = useRouter();
     const { data, loading } = useMeQuery();
-    // if (loading) {
-    //   return <div>Loading...</div>;
-    // }
+
     if (!loading && !data) {
       alert("You need to login");
       router.replace("/login");
-    }
-    if (data && data.me) {
-      const { role } = data.me;
-      if (role !== options.role) {
-        alert("You are not allowed!");
-        router.replace("/");
-      } else {
-        return <WrappedComponent {...props} />;
+    } else if (data) {
+      if (options?.role) {
+        const { role } = data.me;
+        if (role !== options.role) {
+          alert("You are not allowed!");
+          router.replace("/");
+        }
       }
+
+      return <WrappedComponent {...props} />;
     }
 
     return <div>loading</div>;

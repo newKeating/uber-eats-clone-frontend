@@ -1,0 +1,6 @@
+mutation EditProfile($input: EditProfileInput!) {
+  editProfile(input: $input) {
+    ok
+    error
+  }
+}
