@@ -83,6 +83,7 @@ const Index: React.FC<IProps> = () => {
           {data?.restaurants.results?.map((restaurant) => (
             <Restaurant
               key={restaurant.id}
+              restaurantId={restaurant.id}
               name={restaurant.name}
               categoryName={restaurant.category?.name}
             />

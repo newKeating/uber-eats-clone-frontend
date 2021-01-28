@@ -4,7 +4,8 @@ import Layout from "../components/Layout";
 import { useEffect } from "react";
 import { useSearchRestaurantLazyQuery } from "../generated/graphql";
 import withApollo from "../apollo/withApollo";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetStaticProps } from "next";
+import { getStaticProps } from "./restaurant/[id]";
 
 interface IProps {
   searchTerm?: string;
