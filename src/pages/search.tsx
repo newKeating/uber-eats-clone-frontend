@@ -1,11 +1,9 @@
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import React from "react";
-import Layout from "../components/Layout";
-import { useEffect } from "react";
-import { useSearchRestaurantLazyQuery } from "../generated/graphql";
+import React, { useEffect } from "react";
 import withApollo from "../apollo/withApollo";
-import { GetServerSideProps, GetStaticProps } from "next";
-import { getStaticProps } from "./restaurant/[id]";
+import Layout from "../components/Layout";
+import { useSearchRestaurantLazyQuery } from "../generated/graphql";
 
 interface IProps {
   searchTerm?: string;

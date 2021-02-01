@@ -16,7 +16,7 @@ interface ILoginForm {
   password: string;
 }
 
-const Login: React.FC<IProps> = ({}) => {
+export const Login: React.FC<IProps> = ({}) => {
   const onLoginCompleted = (data: LoginMutation) => {
     const {
       login: { ok, token },
@@ -102,6 +102,7 @@ const Login: React.FC<IProps> = ({}) => {
             <ErrorMessage errorMessage="Password must be more than 10chars." />
           )}
           <Button
+            role="button"
             type="submit"
             // isDisabled={!formState.isValid}
             isLoading={loading}

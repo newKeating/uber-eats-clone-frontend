@@ -44,4 +44,6 @@ const Header: React.FC<IProps> = ({}) => {
   );
 };
 
+// export { Header as PureHeader };
 export default withApollo()(Header);
+// export default Header;

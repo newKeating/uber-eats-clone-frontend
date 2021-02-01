@@ -1,9 +1,9 @@
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
+import { useRouter } from "next/router";
 import React from "react";
 import withApollo from "../../apollo/withApollo";
-import { useRestaurantQuery } from "../../generated/graphql";
-import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
+import { useRestaurantQuery } from "../../generated/graphql";
 
 interface IProps {
   id: number;

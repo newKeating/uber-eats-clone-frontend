@@ -10,7 +10,10 @@ const ErrorMessage: React.FC<IProps> = ({
   textAlign = "left",
 }) => {
   return (
-    <span className={`font-medium px-1 text-${textAlign} text-red-500`}>
+    <span
+      role="alert"
+      className={`font-medium px-1 text-${textAlign} text-red-500`}
+    >
       {errorMessage}
     </span>
   );
