@@ -6,9 +6,15 @@ interface IProps {
   name: string;
   categoryName?: string;
   restaurantId: number;
+  coverImg?: string;
 }
 
-const Restaurant: React.FC<IProps> = ({ name, categoryName, restaurantId }) => {
+const Restaurant: React.FC<IProps> = ({
+  name,
+  categoryName,
+  restaurantId,
+  coverImg,
+}) => {
   return (
     <NextLink href="/restaurant/[id]" as={`/restaurant/${restaurantId}`}>
       <Link>

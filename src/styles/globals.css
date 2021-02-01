@@ -12,4 +12,9 @@
 .btn {
   @apply py-3 px-5 bg-gray-800 text-white text-lg  rounded-lg outline-none hover:opacity-90;
 }
+
+.container {
+  @apply max-w-screen-2xl mx-auto;
+}
+
 @tailwind utilities;
