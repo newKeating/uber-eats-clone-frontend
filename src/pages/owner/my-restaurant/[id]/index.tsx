@@ -6,6 +6,7 @@ import withApollo from "../../../../apollo/withApollo";
 import { useMyRestaurantQuery } from "../../../../generated/graphql";
 import NextLink from "next/link";
 import { Link } from "@chakra-ui/react";
+import Dish from "../../../../components/Dish";
 
 interface IProps {}
 
@@ -54,7 +55,20 @@ const MyRestaurant: React.FC<IProps> = ({}) => {
         <div className="mt-10">
           {data?.myRestaurant.restaurant?.menu.length === 0 ? (
             <h4 className="text-xl mb-5">Please upload a dish</h4>
-          ) : null}
+          ) : (
+            <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
+              {data?.myRestaurant.restaurant?.menu.map(
+                ({ id, name, description, price }) => (
+                  <Dish
+                    key={id}
+                    name={name}
+                    description={description}
+                    price={price}
+                  />
+                )
+              )}
+            </div>
+          )}
         </div>
       </div>
     </Layout>
