@@ -4,6 +4,9 @@ query Restaurant($input: RestaurantInput!) {
     error
     result {
       ...RestaurantParts
+      menu {
+        ...DishParts
+      }
     }
   }
 }

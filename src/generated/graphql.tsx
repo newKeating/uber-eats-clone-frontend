@@ -267,6 +267,7 @@ export type CreateOrderOutput = {
   __typename?: 'CreateOrderOutput';
   error?: Maybe<Scalars['String']>;
   ok: Scalars['Boolean'];
+  orderId?: Maybe<Scalars['Int']>;
 };
 
 export type EditOrderOutput = {
@@ -655,6 +656,19 @@ export type CreateDishMutation = (
   ) }
 );
 
+export type CreateOrderMutationVariables = Exact<{
+  input: CreateOrderInput;
+}>;
+
+
+export type CreateOrderMutation = (
+  { __typename?: 'Mutation' }
+  & { createOrder: (
+    { __typename?: 'CreateOrderOutput' }
+    & Pick<CreateOrderOutput, 'ok' | 'error' | 'orderId'>
+  ) }
+);
+
 export type CreateRestaurantMutationVariables = Exact<{
   input: CreateRestaurantInput;
 }>;
@@ -789,6 +803,10 @@ export type RestaurantQuery = (
     & Pick<RestaurantOutput, 'ok' | 'error'>
     & { result?: Maybe<(
       { __typename?: 'Restaurant' }
+      & { menu: Array<(
+        { __typename?: 'Dish' }
+        & DishPartsFragment
+      )> }
       & RestaurantPartsFragment
     )> }
   ) }
@@ -963,6 +981,40 @@ export function useCreateDishMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateDishMutationHookResult = ReturnType<typeof useCreateDishMutation>;
 export type CreateDishMutationResult = Apollo.MutationResult<CreateDishMutation>;
 export type CreateDishMutationOptions = Apollo.BaseMutationOptions<CreateDishMutation, CreateDishMutationVariables>;
+export const CreateOrderDocument = gql`
+    mutation CreateOrder($input: CreateOrderInput!) {
+  createOrder(input: $input) {
+    ok
+    error
+    orderId
+  }
+}
+    `;
+export type CreateOrderMutationFn = Apollo.MutationFunction<CreateOrderMutation, CreateOrderMutationVariables>;
+
+/**
+ * __useCreateOrderMutation__
+ *
+ * To run a mutation, you first call `useCreateOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrderMutation, { data, loading, error }] = useCreateOrderMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateOrderMutation(baseOptions?: Apollo.MutationHookOptions<CreateOrderMutation, CreateOrderMutationVariables>) {
+        return Apollo.useMutation<CreateOrderMutation, CreateOrderMutationVariables>(CreateOrderDocument, baseOptions);
+      }
+export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
+export type CreateOrderMutationResult = Apollo.MutationResult<CreateOrderMutation>;
+export type CreateOrderMutationOptions = Apollo.BaseMutationOptions<CreateOrderMutation, CreateOrderMutationVariables>;
 export const CreateRestaurantDocument = gql`
     mutation CreateRestaurant($input: CreateRestaurantInput!) {
   createRestaurant(input: $input) {
@@ -1263,10 +1315,14 @@ export const RestaurantDocument = gql`
     error
     result {
       ...RestaurantParts
+      menu {
+        ...DishParts
+      }
     }
   }
 }
-    ${RestaurantPartsFragmentDoc}`;
+    ${RestaurantPartsFragmentDoc}
+${DishPartsFragmentDoc}`;
 
 /**
  * __useRestaurantQuery__
