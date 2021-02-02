@@ -7,6 +7,14 @@ import { useMyRestaurantQuery } from "../../../../generated/graphql";
 import NextLink from "next/link";
 import { Link } from "@chakra-ui/react";
 import Dish from "../../../../components/Dish";
+import {
+  VictoryAxis,
+  VictoryBar,
+  VictoryChart,
+  VictoryLine,
+  VictoryPie,
+  VictoryVoronoiContainer,
+} from "victory";
 
 interface IProps {}
 
@@ -25,6 +33,16 @@ const MyRestaurant: React.FC<IProps> = ({}) => {
   console.log("params", router.query);
   console.log("loading", loading);
   console.log("data", data);
+
+  const chartData = [
+    { x: 1, y: 3000 },
+    { x: 2, y: 1500 },
+    { x: 3, y: 4250 },
+    { x: 4, y: 2300 },
+    { x: 5, y: 7150 },
+    { x: 6, y: 6830 },
+    { x: 7, y: 2560 },
+  ];
 
   return (
     <Layout title="My Restaurant | Nuber Eats">
@@ -52,7 +70,7 @@ const MyRestaurant: React.FC<IProps> = ({}) => {
           Buy Promotion &rarr;
         </span>
 
-        <div className="mt-10">
+        <div className="mt-10 mb-10">
           {data?.myRestaurant.restaurant?.menu.length === 0 ? (
             <h4 className="text-xl mb-5">Please upload a dish</h4>
           ) : (
@@ -69,6 +87,55 @@ const MyRestaurant: React.FC<IProps> = ({}) => {
               )}
             </div>
           )}
+        </div>
+        <div className="mt-20">
+          <h4 className="text-center text-2xl font-medium">Sales</h4>
+          <div className="mt-10">
+            <VictoryChart
+              height={500}
+              width={window.innerWidth}
+              domainPadding={50}
+              containerComponent={<VictoryVoronoiContainer />}
+            >
+              <VictoryLine
+                style={{
+                  data: {
+                    strokeWidth: 5,
+                  },
+                }}
+                data={data?.myRestaurant.restaurant?.orders.map((order) => ({
+                  x: order.createdAt,
+                  y: order.total,
+                }))}
+              />
+              <VictoryAxis
+                tickFormat={(tick) => new Date(tick).toLocaleDateString("ko")}
+              />
+              <VictoryAxis
+                style={{ tickLabels: { fontSize: 20 } }}
+                dependentAxis
+                tickFormat={(tick) => `$${tick}`}
+              />
+            </VictoryChart>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="max-w-lg w-full mx-auto">
+              <VictoryChart domainPadding={20}>
+                <VictoryAxis
+                  dependentAxis
+                  tickFormat={(step) => `$${step / 1000}K`}
+                />
+                <VictoryAxis
+                  // label="Days"
+                  tickFormat={(step) => `Day ${step}`}
+                />
+                <VictoryBar data={chartData} />
+              </VictoryChart>
+            </div>
+            <div className="max-w-lg w-full mx-auto">
+              <VictoryPie data={chartData} />
+            </div>
+          </div>
         </div>
       </div>
     </Layout>

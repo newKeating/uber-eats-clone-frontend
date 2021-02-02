@@ -615,6 +615,11 @@ export type DishPartsFragment = (
   )>> }
 );
 
+export type OrderPartsFragment = (
+  { __typename?: 'Order' }
+  & Pick<Order, 'id' | 'createdAt' | 'total'>
+);
+
 export type RestaurantPartsFragment = (
   { __typename?: 'Restaurant' }
   & Pick<Restaurant, 'id' | 'name' | 'coverImg' | 'address' | 'isPromoted'>
@@ -748,6 +753,9 @@ export type MyRestaurantQuery = (
       & { menu: Array<(
         { __typename?: 'Dish' }
         & DishPartsFragment
+      )>, orders: Array<(
+        { __typename?: 'Order' }
+        & OrderPartsFragment
       )> }
       & RestaurantPartsFragment
     )> }
@@ -868,6 +876,13 @@ export const DishPartsFragmentDoc = gql`
       extra
     }
   }
+}
+    `;
+export const OrderPartsFragmentDoc = gql`
+    fragment OrderParts on Order {
+  id
+  createdAt
+  total
 }
     `;
 export const RestaurantPartsFragmentDoc = gql`
@@ -1170,11 +1185,15 @@ export const MyRestaurantDocument = gql`
       menu {
         ...DishParts
       }
+      orders {
+        ...OrderParts
+      }
     }
   }
 }
     ${RestaurantPartsFragmentDoc}
-${DishPartsFragmentDoc}`;
+${DishPartsFragmentDoc}
+${OrderPartsFragmentDoc}`;
 
 /**
  * __useMyRestaurantQuery__

@@ -7,6 +7,9 @@ query MyRestaurant($input: MyRestaurantInput!) {
       menu {
         ...DishParts
       }
+      orders {
+        ...OrderParts
+      }
     }
   }
 }
