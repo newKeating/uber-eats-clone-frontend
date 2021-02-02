@@ -27,6 +27,7 @@ export const createRestaruantFormSchema = yup.object().shape({
   address: yup.string().required("Address is required"),
   categoryName: yup.string().required("Category is required"),
   file: yup.mixed().required("File is required"),
+  // must set up file size validation
 });
 
 const CreateRestaurantForm: React.FC<IProps> = ({

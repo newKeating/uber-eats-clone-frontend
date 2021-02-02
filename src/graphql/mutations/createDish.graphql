@@ -1,0 +1,6 @@
+mutation CreateDish($input: CreateDishInput!) {
+  createDish(input: $input) {
+    ok
+    error
+  }
+}

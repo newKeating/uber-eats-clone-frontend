@@ -1,12 +1,19 @@
-import React from "react";
+import { ApolloClient } from "@apollo/client";
+import { Link } from "@chakra-ui/react";
+import NextLink from "next/link";
+import React, { useEffect } from "react";
 import withApollo from "../../apollo/withApollo";
 import Layout from "../../components/Layout";
-import { useMyRestaurantsQuery } from "../../generated/graphql";
-import NextLink from "next/link";
-import { Link } from "@chakra-ui/react";
 import Restaurant from "../../components/Restaurant";
+import {
+  MyRestaurantsDocument,
+  MyRestaurantsQuery,
+  useMyRestaurantsQuery,
+} from "../../generated/graphql";
 
-interface IProps {}
+interface IProps {
+  // client: ApolloClient<any>;
+}
 
 const MyRestaurants: React.FC<IProps> = ({}) => {
   const { data, loading } = useMyRestaurantsQuery();

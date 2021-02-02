@@ -174,6 +174,7 @@ export type CreateRestaurantOutput = {
   __typename?: 'CreateRestaurantOutput';
   error?: Maybe<Scalars['String']>;
   ok: Scalars['Boolean'];
+  restaurantId: Scalars['Int'];
 };
 
 export type DeleteRestaurantOutput = {
@@ -601,6 +602,19 @@ export type CategoryPartsFragment = (
   & Pick<Category, 'id' | 'name' | 'coverImg' | 'slug' | 'restaurantCount'>
 );
 
+export type DishPartsFragment = (
+  { __typename?: 'Dish' }
+  & Pick<Dish, 'id' | 'name' | 'price' | 'photo' | 'description'>
+  & { options?: Maybe<Array<(
+    { __typename?: 'DishOption' }
+    & Pick<DishOption, 'name' | 'extra'>
+    & { choices?: Maybe<Array<(
+      { __typename?: 'DishChoice' }
+      & Pick<DishChoice, 'name' | 'extra'>
+    )>> }
+  )>> }
+);
+
 export type RestaurantPartsFragment = (
   { __typename?: 'Restaurant' }
   & Pick<Restaurant, 'id' | 'name' | 'coverImg' | 'address' | 'isPromoted'>
@@ -623,6 +637,19 @@ export type CreateAccountMutation = (
   ) }
 );
 
+export type CreateDishMutationVariables = Exact<{
+  input: CreateDishInput;
+}>;
+
+
+export type CreateDishMutation = (
+  { __typename?: 'Mutation' }
+  & { createDish: (
+    { __typename?: 'CreateDishOutput' }
+    & Pick<CreateDishOutput, 'ok' | 'error'>
+  ) }
+);
+
 export type CreateRestaurantMutationVariables = Exact<{
   input: CreateRestaurantInput;
 }>;
@@ -632,7 +659,7 @@ export type CreateRestaurantMutation = (
   { __typename?: 'Mutation' }
   & { createRestaurant: (
     { __typename?: 'CreateRestaurantOutput' }
-    & Pick<CreateRestaurantOutput, 'ok' | 'error'>
+    & Pick<CreateRestaurantOutput, 'ok' | 'restaurantId' | 'error'>
   ) }
 );
 
@@ -703,6 +730,27 @@ export type MeQuery = (
   & { me: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'email' | 'role' | 'verified'>
+  ) }
+);
+
+export type MyRestaurantQueryVariables = Exact<{
+  input: MyRestaurantInput;
+}>;
+
+
+export type MyRestaurantQuery = (
+  { __typename?: 'Query' }
+  & { myRestaurant: (
+    { __typename?: 'MyRestaurantOutput' }
+    & Pick<MyRestaurantOutput, 'ok' | 'error'>
+    & { restaurant?: Maybe<(
+      { __typename?: 'Restaurant' }
+      & { menu: Array<(
+        { __typename?: 'Dish' }
+        & DishPartsFragment
+      )> }
+      & RestaurantPartsFragment
+    )> }
   ) }
 );
 
@@ -805,6 +853,23 @@ export const CategoryPartsFragmentDoc = gql`
   restaurantCount
 }
     `;
+export const DishPartsFragmentDoc = gql`
+    fragment DishParts on Dish {
+  id
+  name
+  price
+  photo
+  description
+  options {
+    name
+    extra
+    choices {
+      name
+      extra
+    }
+  }
+}
+    `;
 export const RestaurantPartsFragmentDoc = gql`
     fragment RestaurantParts on Restaurant {
   id
@@ -850,10 +915,44 @@ export function useCreateAccountMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateAccountMutationHookResult = ReturnType<typeof useCreateAccountMutation>;
 export type CreateAccountMutationResult = Apollo.MutationResult<CreateAccountMutation>;
 export type CreateAccountMutationOptions = Apollo.BaseMutationOptions<CreateAccountMutation, CreateAccountMutationVariables>;
+export const CreateDishDocument = gql`
+    mutation CreateDish($input: CreateDishInput!) {
+  createDish(input: $input) {
+    ok
+    error
+  }
+}
+    `;
+export type CreateDishMutationFn = Apollo.MutationFunction<CreateDishMutation, CreateDishMutationVariables>;
+
+/**
+ * __useCreateDishMutation__
+ *
+ * To run a mutation, you first call `useCreateDishMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDishMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDishMutation, { data, loading, error }] = useCreateDishMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateDishMutation(baseOptions?: Apollo.MutationHookOptions<CreateDishMutation, CreateDishMutationVariables>) {
+        return Apollo.useMutation<CreateDishMutation, CreateDishMutationVariables>(CreateDishDocument, baseOptions);
+      }
+export type CreateDishMutationHookResult = ReturnType<typeof useCreateDishMutation>;
+export type CreateDishMutationResult = Apollo.MutationResult<CreateDishMutation>;
+export type CreateDishMutationOptions = Apollo.BaseMutationOptions<CreateDishMutation, CreateDishMutationVariables>;
 export const CreateRestaurantDocument = gql`
     mutation CreateRestaurant($input: CreateRestaurantInput!) {
   createRestaurant(input: $input) {
     ok
+    restaurantId
     error
   }
 }
@@ -1061,6 +1160,47 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const MyRestaurantDocument = gql`
+    query MyRestaurant($input: MyRestaurantInput!) {
+  myRestaurant(input: $input) {
+    ok
+    error
+    restaurant {
+      ...RestaurantParts
+      menu {
+        ...DishParts
+      }
+    }
+  }
+}
+    ${RestaurantPartsFragmentDoc}
+${DishPartsFragmentDoc}`;
+
+/**
+ * __useMyRestaurantQuery__
+ *
+ * To run a query within a React component, call `useMyRestaurantQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyRestaurantQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyRestaurantQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useMyRestaurantQuery(baseOptions: Apollo.QueryHookOptions<MyRestaurantQuery, MyRestaurantQueryVariables>) {
+        return Apollo.useQuery<MyRestaurantQuery, MyRestaurantQueryVariables>(MyRestaurantDocument, baseOptions);
+      }
+export function useMyRestaurantLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyRestaurantQuery, MyRestaurantQueryVariables>) {
+          return Apollo.useLazyQuery<MyRestaurantQuery, MyRestaurantQueryVariables>(MyRestaurantDocument, baseOptions);
+        }
+export type MyRestaurantQueryHookResult = ReturnType<typeof useMyRestaurantQuery>;
+export type MyRestaurantLazyQueryHookResult = ReturnType<typeof useMyRestaurantLazyQuery>;
+export type MyRestaurantQueryResult = Apollo.QueryResult<MyRestaurantQuery, MyRestaurantQueryVariables>;
 export const MyRestaurantsDocument = gql`
     query myRestaurants {
   myRestaurants {

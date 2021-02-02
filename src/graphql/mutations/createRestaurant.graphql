@@ -1,6 +1,7 @@
 mutation CreateRestaurant($input: CreateRestaurantInput!) {
   createRestaurant(input: $input) {
     ok
+    restaurantId
     error
   }
 }
