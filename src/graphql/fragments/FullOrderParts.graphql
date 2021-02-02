@@ -1,0 +1,17 @@
+fragment FullOrderParts on Order {
+  id
+  status
+  total
+  driver {
+    id
+    email
+  }
+  customer {
+    id
+    email
+  }
+  restaurant {
+    id
+    name
+  }
+}

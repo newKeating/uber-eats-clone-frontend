@@ -3,21 +3,7 @@ query GetOrder($input: GetOrderInput!) {
     ok
     error
     order {
-      id
-      status
-      total
-      driver {
-        id
-        email
-      }
-      customer {
-        id
-        email
-      }
-      restaurant {
-        id
-        name
-      }
+      ...FullOrderParts
     }
   }
 }

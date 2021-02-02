@@ -10,6 +10,12 @@ import {
 } from "../../generated/graphql";
 import Layout from "../../components/Layout";
 import Button from "../../components/Button";
+import {
+  // useOrderUpdatesSubscription,
+  OrderUpdatesDocument,
+  OrderUpdatesSubscription,
+} from "../../generated/graphql";
+import { useEffect } from "react";
 
 interface IProps {}
 
@@ -17,8 +23,10 @@ const Order: React.FC<IProps> = ({}) => {
   const router = useRouter();
   const { data: meData } = useMeQuery();
   const orderId = parseInt(router.query.id as string);
+
   console.log("orderId", orderId);
-  const { data, loading } = useGetOrderQuery({
+
+  const { data, loading: getOrderLoading, subscribeToMore } = useGetOrderQuery({
     variables: {
       input: {
         id: orderId,
@@ -26,9 +34,49 @@ const Order: React.FC<IProps> = ({}) => {
     },
   });
 
-  console.log("loading", loading);
-  console.log("data", data);
-  if (loading) {
+  // const { data: subscriptionData } = useOrderUpdatesSubscription({
+  //   variables: {
+  //     input: {
+  //       id: orderId,
+  //     },
+  //   },
+  // });
+
+  useEffect(() => {
+    if (data?.getOrder.ok) {
+      subscribeToMore({
+        document: OrderUpdatesDocument,
+        variables: {
+          input: {
+            id: orderId,
+          },
+        },
+        updateQuery: (
+          prev,
+          {
+            subscriptionData: { data },
+          }: { subscriptionData: { data: OrderUpdatesSubscription } }
+        ) => {
+          if (!data) return prev;
+          return {
+            getOrder: {
+              ...prev.getOrder,
+              order: {
+                ...data.orderUpdates,
+              },
+            },
+          };
+        },
+      });
+    }
+  }, [data]);
+
+  console.log("getOrderLoading", getOrderLoading);
+  console.log("getOrderData", data);
+
+  // console.log("subscriptionData", subscriptionData);
+
+  if (getOrderLoading) {
     return <div>Loading...</div>;
   }
   return (

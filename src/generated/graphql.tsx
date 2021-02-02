@@ -616,6 +616,21 @@ export type DishPartsFragment = (
   )>> }
 );
 
+export type FullOrderPartsFragment = (
+  { __typename?: 'Order' }
+  & Pick<Order, 'id' | 'status' | 'total'>
+  & { driver?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'email'>
+  )>, customer?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'email'>
+  )>, restaurant?: Maybe<(
+    { __typename?: 'Restaurant' }
+    & Pick<Restaurant, 'id' | 'name'>
+  )> }
+);
+
 export type OrderPartsFragment = (
   { __typename?: 'Order' }
   & Pick<Order, 'id' | 'createdAt' | 'total'>
@@ -753,17 +768,7 @@ export type GetOrderQuery = (
     & Pick<GetOrderOutput, 'ok' | 'error'>
     & { order?: Maybe<(
       { __typename?: 'Order' }
-      & Pick<Order, 'id' | 'status' | 'total'>
-      & { driver?: Maybe<(
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'email'>
-      )>, customer?: Maybe<(
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'email'>
-      )>, restaurant?: Maybe<(
-        { __typename?: 'Restaurant' }
-        & Pick<Restaurant, 'id' | 'name'>
-      )> }
+      & FullOrderPartsFragment
     )> }
   ) }
 );
@@ -897,6 +902,19 @@ export type SearchRestaurantQuery = (
   ) }
 );
 
+export type OrderUpdatesSubscriptionVariables = Exact<{
+  input: OrderUpdatesInput;
+}>;
+
+
+export type OrderUpdatesSubscription = (
+  { __typename?: 'Subscription' }
+  & { orderUpdates: (
+    { __typename?: 'Order' }
+    & FullOrderPartsFragment
+  ) }
+);
+
 export const CategoryPartsFragmentDoc = gql`
     fragment CategoryParts on Category {
   id
@@ -920,6 +938,25 @@ export const DishPartsFragmentDoc = gql`
       name
       extra
     }
+  }
+}
+    `;
+export const FullOrderPartsFragmentDoc = gql`
+    fragment FullOrderParts on Order {
+  id
+  status
+  total
+  driver {
+    id
+    email
+  }
+  customer {
+    id
+    email
+  }
+  restaurant {
+    id
+    name
   }
 }
     `;
@@ -1225,25 +1262,11 @@ export const GetOrderDocument = gql`
     ok
     error
     order {
-      id
-      status
-      total
-      driver {
-        id
-        email
-      }
-      customer {
-        id
-        email
-      }
-      restaurant {
-        id
-        name
-      }
+      ...FullOrderParts
     }
   }
 }
-    `;
+    ${FullOrderPartsFragmentDoc}`;
 
 /**
  * __useGetOrderQuery__
@@ -1550,3 +1573,32 @@ export function useSearchRestaurantLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type SearchRestaurantQueryHookResult = ReturnType<typeof useSearchRestaurantQuery>;
 export type SearchRestaurantLazyQueryHookResult = ReturnType<typeof useSearchRestaurantLazyQuery>;
 export type SearchRestaurantQueryResult = Apollo.QueryResult<SearchRestaurantQuery, SearchRestaurantQueryVariables>;
+export const OrderUpdatesDocument = gql`
+    subscription OrderUpdates($input: OrderUpdatesInput!) {
+  orderUpdates(input: $input) {
+    ...FullOrderParts
+  }
+}
+    ${FullOrderPartsFragmentDoc}`;
+
+/**
+ * __useOrderUpdatesSubscription__
+ *
+ * To run a query within a React component, call `useOrderUpdatesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useOrderUpdatesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOrderUpdatesSubscription({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useOrderUpdatesSubscription(baseOptions: Apollo.SubscriptionHookOptions<OrderUpdatesSubscription, OrderUpdatesSubscriptionVariables>) {
+        return Apollo.useSubscription<OrderUpdatesSubscription, OrderUpdatesSubscriptionVariables>(OrderUpdatesDocument, baseOptions);
+      }
+export type OrderUpdatesSubscriptionHookResult = ReturnType<typeof useOrderUpdatesSubscription>;
+export type OrderUpdatesSubscriptionResult = Apollo.SubscriptionResult<OrderUpdatesSubscription>;
