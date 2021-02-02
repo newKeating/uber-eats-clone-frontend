@@ -1,0 +1,23 @@
+query GetOrder($input: GetOrderInput!) {
+  getOrder(input: $input) {
+    ok
+    error
+    order {
+      id
+      status
+      total
+      driver {
+        id
+        email
+      }
+      customer {
+        id
+        email
+      }
+      restaurant {
+        id
+        name
+      }
+    }
+  }
+}

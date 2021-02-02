@@ -38,7 +38,7 @@ const Restaurant: NextPage<IProps> = ({}) => {
     } = data;
     if (ok) {
       alert("order created");
-      router.push(`/orders/${orderId}`);
+      router.push(`/order/${orderId}`);
     }
   };
 
@@ -134,6 +134,9 @@ const Restaurant: NextPage<IProps> = ({}) => {
   };
 
   const onClickConfirmOrder = () => {
+    if (createOrderLoading) {
+      return;
+    }
     if (orderItems.length === 0) {
       alert("Can't place empty order");
       return;

@@ -741,6 +741,33 @@ export type CategoryQuery = (
   ) }
 );
 
+export type GetOrderQueryVariables = Exact<{
+  input: GetOrderInput;
+}>;
+
+
+export type GetOrderQuery = (
+  { __typename?: 'Query' }
+  & { getOrder: (
+    { __typename?: 'GetOrderOutput' }
+    & Pick<GetOrderOutput, 'ok' | 'error'>
+    & { order?: Maybe<(
+      { __typename?: 'Order' }
+      & Pick<Order, 'id' | 'status' | 'total'>
+      & { driver?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'email'>
+      )>, customer?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'email'>
+      )>, restaurant?: Maybe<(
+        { __typename?: 'Restaurant' }
+        & Pick<Restaurant, 'id' | 'name'>
+      )> }
+    )> }
+  ) }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1192,6 +1219,57 @@ export function useCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<C
 export type CategoryQueryHookResult = ReturnType<typeof useCategoryQuery>;
 export type CategoryLazyQueryHookResult = ReturnType<typeof useCategoryLazyQuery>;
 export type CategoryQueryResult = Apollo.QueryResult<CategoryQuery, CategoryQueryVariables>;
+export const GetOrderDocument = gql`
+    query GetOrder($input: GetOrderInput!) {
+  getOrder(input: $input) {
+    ok
+    error
+    order {
+      id
+      status
+      total
+      driver {
+        id
+        email
+      }
+      customer {
+        id
+        email
+      }
+      restaurant {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOrderQuery__
+ *
+ * To run a query within a React component, call `useGetOrderQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrderQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrderQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetOrderQuery(baseOptions: Apollo.QueryHookOptions<GetOrderQuery, GetOrderQueryVariables>) {
+        return Apollo.useQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, baseOptions);
+      }
+export function useGetOrderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrderQuery, GetOrderQueryVariables>) {
+          return Apollo.useLazyQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, baseOptions);
+        }
+export type GetOrderQueryHookResult = ReturnType<typeof useGetOrderQuery>;
+export type GetOrderLazyQueryHookResult = ReturnType<typeof useGetOrderLazyQuery>;
+export type GetOrderQueryResult = Apollo.QueryResult<GetOrderQuery, GetOrderQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
