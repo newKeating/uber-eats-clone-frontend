@@ -1,0 +1,6 @@
+mutation EditOrder($input: EditOrderInput!) {
+  editOrder(input: $input) {
+    ok
+    error
+  }
+}

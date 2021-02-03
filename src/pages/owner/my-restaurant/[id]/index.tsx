@@ -1,12 +1,8 @@
-import React from "react";
-import Layout from "../../../../components/Layout";
-import { useRouter } from "next/router";
-import { GetServerSideProps } from "next";
-import withApollo from "../../../../apollo/withApollo";
-import { useMyRestaurantQuery } from "../../../../generated/graphql";
-import NextLink from "next/link";
 import { Link } from "@chakra-ui/react";
-import Dish from "../../../../components/Dish";
+import { GetServerSideProps } from "next";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
 import {
   VictoryAxis,
   VictoryBar,
@@ -15,6 +11,14 @@ import {
   VictoryPie,
   VictoryVoronoiContainer,
 } from "victory";
+import withApollo from "../../../../apollo/withApollo";
+import Dish from "../../../../components/Dish";
+import Layout from "../../../../components/Layout";
+import {
+  useMyRestaurantQuery,
+  usePendingOrdersSubscription,
+} from "../../../../generated/graphql";
+import { useEffect } from "react";
 
 interface IProps {}
 
@@ -43,6 +47,13 @@ const MyRestaurant: React.FC<IProps> = ({}) => {
     { x: 6, y: 6830 },
     { x: 7, y: 2560 },
   ];
+
+  const { data: subscrptionData } = usePendingOrdersSubscription();
+  useEffect(() => {
+    if (subscrptionData?.pendingOrders.id) {
+      router.push(`/order/${subscrptionData.pendingOrders.id}`);
+    }
+  }, [subscrptionData]);
 
   return (
     <Layout title="My Restaurant | Nuber Eats">
@@ -93,7 +104,7 @@ const MyRestaurant: React.FC<IProps> = ({}) => {
           <div className="mt-10">
             <VictoryChart
               height={500}
-              width={window.innerWidth}
+              width={1000}
               domainPadding={50}
               containerComponent={<VictoryVoronoiContainer />}
             >

@@ -16,6 +16,7 @@ import {
   OrderUpdatesSubscription,
 } from "../../generated/graphql";
 import { useEffect } from "react";
+import { useEditOrderMutation } from "../../generated/graphql";
 
 interface IProps {}
 
@@ -71,10 +72,23 @@ const Order: React.FC<IProps> = ({}) => {
     }
   }, [data]);
 
+  const [editOrder] = useEditOrderMutation();
+
   console.log("getOrderLoading", getOrderLoading);
   console.log("getOrderData", data);
 
   // console.log("subscriptionData", subscriptionData);
+
+  const onButtonClick = (newStatus: OrderStatus) => {
+    editOrder({
+      variables: {
+        input: {
+          id: orderId,
+          status: newStatus,
+        },
+      },
+    });
+  };
 
   if (getOrderLoading) {
     return <div>Loading...</div>;
@@ -115,16 +129,12 @@ const Order: React.FC<IProps> = ({}) => {
           {meData?.me.role === UserRole.Owner && (
             <>
               {data?.getOrder.order?.status === OrderStatus.Pending && (
-                <Button
-                // onClick={() => onButtonClick(OrderStatus.Cooking)}
-                >
+                <Button onClick={() => onButtonClick(OrderStatus.Cooking)}>
                   Accept Order
                 </Button>
               )}
               {data?.getOrder.order?.status === OrderStatus.Cooking && (
-                <Button
-                // onClick={() => onButtonClick(OrderStatus.Cooked)}
-                >
+                <Button onClick={() => onButtonClick(OrderStatus.Cooked)}>
                   Order Cooked
                 </Button>
               )}
