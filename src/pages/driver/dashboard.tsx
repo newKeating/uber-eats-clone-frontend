@@ -2,6 +2,15 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import GoogleMapReact from "google-map-react";
 import Button from "../../components/Button";
+import {
+  useCookedOrdersSubscription,
+  useTakeOrderMutation,
+  TakeOrderMutation,
+} from "../../generated/graphql";
+import withApollo from "../../apollo/withApollo";
+import NextLink from "next/link";
+import { Link } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 
 interface IProps {}
 
@@ -60,7 +69,7 @@ const dashboard: React.FC<IProps> = ({}) => {
     });
   }, []);
 
-  const onClickGetRoute = () => {
+  const makeRoute = () => {
     if (map) {
       const directionsService = new google.maps.DirectionsService();
       const directionRenderer = new google.maps.DirectionsRenderer();
@@ -88,6 +97,41 @@ const dashboard: React.FC<IProps> = ({}) => {
     }
   };
 
+  const onClickGetRoute = () => {
+    makeRoute();
+  };
+
+  const { data: cookedOrdersData } = useCookedOrdersSubscription();
+
+  useEffect(() => {
+    if (cookedOrdersData?.cookedOrders.id) {
+      makeRoute();
+    }
+  }, [cookedOrdersData]);
+
+  const router = useRouter();
+
+  const [takeOrder] = useTakeOrderMutation({
+    onCompleted: (data: TakeOrderMutation) => {
+      const {
+        takeOrder: { ok, error },
+      } = data;
+      if (ok) {
+        router.push(`/order/${cookedOrdersData?.cookedOrders.id}`);
+      }
+    },
+  });
+
+  const onClickAcceptOrder = (orderId: number) => {
+    takeOrder({
+      variables: {
+        input: {
+          id: orderId,
+        },
+      },
+    });
+  };
+
   return (
     <Layout title="Dashboard | Nuber Eats">
       <div className="overflow-hidden" style={{ width: 1280, height: "95vh" }}>
@@ -111,8 +155,22 @@ const dashboard: React.FC<IProps> = ({}) => {
         </GoogleMapReact>
       </div>
       <Button onClick={onClickGetRoute}>Get Route</Button>
+
+      {cookedOrdersData?.cookedOrders && (
+        <div className="max-w-screen-sm mx-auto bg-white relative-top-10 shadow-lg py-8 px-5">
+          <h1 className="text-center text-3xl font-medium">New Cooked Order</h1>
+          <h4 className="text-center text-2xl font-medium">
+            Pick it up soon @ {cookedOrdersData.cookedOrders.restaurant?.name}
+          </h4>
+          <Button
+            onClick={() => onClickAcceptOrder(cookedOrdersData.cookedOrders.id)}
+          >
+            Accept Picking-up Order
+          </Button>
+        </div>
+      )}
     </Layout>
   );
 };
 
-export default dashboard;
+export default withApollo()(dashboard);

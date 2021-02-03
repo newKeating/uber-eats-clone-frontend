@@ -1,0 +1,5 @@
+subscription CookedOrders {
+  cookedOrders {
+    ...FullOrderParts
+  }
+}

@@ -1,22 +1,19 @@
-import React from "react";
-import { useRouter } from "next/router";
-import withApollo from "../../apollo/withApollo";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
+import withApollo from "../../apollo/withApollo";
+import Button from "../../components/Button";
+import Layout from "../../components/Layout";
 import {
   OrderStatus,
+  // useOrderUpdatesSubscription,
+  OrderUpdatesDocument,
+  OrderUpdatesSubscription,
+  useEditOrderMutation,
   useGetOrderQuery,
   useMeQuery,
   UserRole,
 } from "../../generated/graphql";
-import Layout from "../../components/Layout";
-import Button from "../../components/Button";
-import {
-  // useOrderUpdatesSubscription,
-  OrderUpdatesDocument,
-  OrderUpdatesSubscription,
-} from "../../generated/graphql";
-import { useEffect } from "react";
-import { useEditOrderMutation } from "../../generated/graphql";
 
 interface IProps {}
 
@@ -149,16 +146,12 @@ const Order: React.FC<IProps> = ({}) => {
           {meData?.me.role === UserRole.Delivery && (
             <>
               {data?.getOrder.order?.status === OrderStatus.Cooked && (
-                <Button
-                // onClick={() => onButtonClick(OrderStatus.PickedUp)}
-                >
+                <Button onClick={() => onButtonClick(OrderStatus.PickedUp)}>
                   Picked Up
                 </Button>
               )}
               {data?.getOrder.order?.status === OrderStatus.PickedUp && (
-                <Button
-                // onClick={() => onButtonClick(OrderStatus.Delivered)}
-                >
+                <Button onClick={() => onButtonClick(OrderStatus.Delivered)}>
                   Order Delivered
                 </Button>
               )}
